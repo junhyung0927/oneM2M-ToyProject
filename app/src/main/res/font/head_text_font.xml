@@ -1,0 +1,25 @@
+<font-family
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedAttribute,ResourceCycle"
+    >
+
+    <!--ligt-->
+    <font
+        android:font="@font/eulyoo1945regular"
+        android:fontStyle="normal"
+        android:fontWeight="300"
+        app:font="@font/eulyoo1945regular"
+        app:fontStyle="normal"
+        app:fontWeight="300"/>
+
+    <!--medium-->
+    <font
+        android:font="@font/eulyoo1945semibold"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/eulyoo1945semibold"
+        app:fontStyle="normal"
+        app:fontWeight="500"/>
+</font-family>

@@ -1,113 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fffeeb"
+    android:background="#ffffff"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMain"
+    <TextView
+        android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="start|fill"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/title"
+        style="@style/Text.HeadStyle"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_head_text"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/black"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        />
+    <!--    <com.airbnb.lottie.LottieAnimationView-->
+    <!--        android:id="@+id/lottie_btnRetrieve"-->
+    <!--        android:layout_width="200dp"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_marginStart="15dp"-->
+    <!--        app:layout_constraintStart_toStartOf="@id/textViewTitle"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/textViewTitle"-->
+    <!--        app:lottie_autoPlay="true"-->
+    <!--        app:lottie_loop="true"-->
+    <!--        app:lottie_rawRes="@raw/submit_button" />-->
 
-            <TextView
-                android:id="@+id/textViewTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/title"
-                android:textSize="20sp" />
+    <Button
+        android:id="@+id/btnRetrieve"
+        style="@style/Text.BodyStyle"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|start"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:outlineSpotShadowColor="#FFFFFF"
+        android:text="@string/btn_co2"
+        app:layout_constraintStart_toStartOf="@id/textViewTitle"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
-        </LinearLayout>
+    <Switch
+        android:id="@+id/switch_mqtt"
+        style="@style/Text.BodyStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_switch"
+        android:textColor="#8C8C8C"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:theme="@style/SwitchTheme"
+        app:layout_constraintStart_toEndOf="@id/btnRetrieve"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/textViewData"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:text="@string/textview_about"
+        app:layout_constraintTop_toBottomOf="@id/btnRetrieve"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="#fdfcfc" />
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_light_animation"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/lighton" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_air_animation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/airconditional" />
+
+    <LinearLayout
+        android:id="@+id/toggle_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ToggleButton
+            android:id="@+id/btnControl_Green"
+            android:background="#FFFFFF"
+            android:outlineSpotShadowColor="#FFFFFF"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnRetrieve"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|start"
-                android:layout_weight="1"
-                android:text="@string/btn_co2" />
-
-            <Switch
-                android:id="@+id/switch_mqtt"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:text="@string/btn_switch"
-                android:textAlignment="textEnd"
-                android:textColor="#0019fd"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <ScrollView
-            android:id="@+id/scrollViewText"
-            android:layout_width="match_parent"
+            android:layout_gravity="start"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:background="#575c72"
-            android:layout_height="0dp">
+            android:textColor="#FFBB00"
+            android:textColorHighlight="#FFBB00"
+            android:textOff="@string/btn_green_off"
+            android:textOn="@string/btn_green_on"
+            android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:weightSum="1">
-
-                <TextView
-                    android:id="@+id/textViewData"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/textview_about"
-                    android:textColor="#fdfcfc" />
-            </LinearLayout>
-        </ScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ToggleButton
+            android:id="@+id/btnControl_Blue"
+            android:background="#FFFFFF"
+            android:outlineSpotShadowColor="#FFFFFF"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ToggleButton
-                android:id="@+id/btnControl_Green"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:textColor="#356e4a"
-                android:textColorHighlight="#b34444"
-                android:textOff="@string/btn_green_off"
-                android:textOn="@string/btn_green_on"
-                android:textStyle="bold" />
-
-            <ToggleButton
-                android:id="@+id/btnControl_Blue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:textColor="#275de6"
-                android:textColorHighlight="#fa0505"
-                android:textOff="@string/btn_blue_off"
-                android:textOn="@string/btn_blue_on"
-                android:textStyle="bold" />
-        </LinearLayout>
-
+            android:layout_gravity="end"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:textColor="#275de6"
+            android:textColorHighlight="#275de6"
+            android:textOff="@string/btn_blue_off"
+            android:textOn="@string/btn_blue_on"
+            android:textStyle="bold" />
     </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
