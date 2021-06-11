@@ -489,6 +489,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     resp.append(strLine);
                 }
                 if (resp.toString() != "") {
+                    System.out.println("HTTP 과부하");
                     receiver.getResponseBody(resp.toString());
                 }
                 conn.disconnect();
