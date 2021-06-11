@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Mobius SampleApp</string>
-    <string name="textview_about" translatable="false">센서와 연결을 해야 합니다.</string>
+    <string name="textview_about" translatable="false">연결중입니다.</string>
     <string name="btn_co2" translatable="false">CO2 조회</string>
     <string name="title" translatable="false">Wisoft Platform</string>
     <string name="btn_switch" translatable="false">MQTT Co2 조회</string>
