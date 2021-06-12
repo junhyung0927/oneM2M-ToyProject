@@ -64,15 +64,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/textView_led_data"-->
-<!--        android:layout_width="300dp"-->
-<!--        android:layout_height="300dp"-->
-<!--        android:text="@string/textview_about"-->
-<!--        android:textColor="@color/black"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />-->
+    <TextView
+        android:id="@+id/textView_led_data"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        style="@style/Text.BodyStyle"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
+
+    <TextView
+        android:id="@+id/textView_preview"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:text="센서와 연결해주세요."
+        style="@style/Text.BodyStyle"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_light_animation"

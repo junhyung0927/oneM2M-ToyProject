@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     public ToggleButton btnControl_airConditional;
     public Switch Switch_MQTT;
     public TextView textView_co2_data;
+    public TextView textView_led_data;
+    public TextView textView_preview;
     public Handler handler;
 
     private static CSEBase csebase = new CSEBase();
@@ -84,8 +86,10 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         btnControl_Led = (ToggleButton) findViewById(R.id.btnControl_Led);
         btnControl_airConditional = (ToggleButton) findViewById(R.id.btnControl_airConditional);
         textView_co2_data = (TextView) findViewById(R.id.textView_co2_data);
+        textView_led_data = (TextView) findViewById(R.id.textView_led_data);
+        textView_preview = (TextView) findViewById(R.id.textView_preview);
 
-//            btnRetrieve.setOnClickListener(this);
+        //btnRetrieve.setOnClickListener(this);
         Switch_MQTT.setOnCheckedChangeListener(this);
         btnControl_Led.setOnClickListener(this);
         btnControl_airConditional.setOnClickListener(this);
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         if (isChecked) {
             Log.d(TAG, "MQTT Create");
             textView_co2_data.setVisibility(View.VISIBLE);
+            textView_preview.setVisibility(View.GONE);
             lottie_air_animation.resumeAnimation();
             lottie_air_animation.setProgress(0.1f);
             lottie_air_animation.setVisibility(View.VISIBLE);
@@ -148,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         } else {
             lottie_air_animation.setVisibility(View.GONE);
             textView_co2_data.setVisibility(View.GONE);
+            textView_preview.setVisibility(View.VISIBLE);
             Log.d(TAG, "MQTT Close");
             MQTT_Create(false);
         }
@@ -280,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 if (((ToggleButton) v).isChecked()) {
                     lottie_light_animation.resumeAnimation();
                     lottie_light_animation.setVisibility(View.VISIBLE);
+
                     ControlRequest req = new ControlRequest("1");
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
@@ -288,7 +295,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_co2_data.setText("LED 센서 ON \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_preview.setVisibility(View.GONE);
+                                        textView_led_data.setVisibility(View.VISIBLE);
+                                        textView_led_data.setText("LED 센서 ON \r\n\r\n" + jsonObject1.get("con"));
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -300,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 } else {
                     lottie_light_animation.setVisibility(View.GONE);
                     ControlRequest req = new ControlRequest("2");
+
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
                             handler.post(new Runnable() {
@@ -307,7 +317,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_co2_data.setText("LED 센서 OFF \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setText("LED 센서 OFF \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setVisibility(View.GONE);
+                                        textView_preview.setVisibility(View.VISIBLE);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -457,7 +469,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         public void run() {
             try {
                 String sb = csebase.getServiceUrl() + "/" + ServiceAEName + "/" + container_name;
-
                 URL mUrl = new URL(sb);
 
                 HttpURLConnection conn = (HttpURLConnection) mUrl.openConnection();
