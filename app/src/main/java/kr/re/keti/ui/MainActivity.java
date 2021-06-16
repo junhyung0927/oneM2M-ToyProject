@@ -612,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         public SubscribeResource() {
             subscribeInstance = new ContentSubscribeObject();
             subscribeInstance.setUrl(csebase.getHost());
-            subscribeInstance.setResourceName(ae.getAEid() + "_rn");
+            subscribeInstance.setResourceName(ae.getAEid() + "_rn3");
             subscribeInstance.setPath(ae.getAEid() + "_sub");
             subscribeInstance.setOrigin_id(ae.getAEid());
         }
