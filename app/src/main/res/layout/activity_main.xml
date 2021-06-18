@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context=".MainActivity">
+    >
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -23,22 +23,21 @@
 
     <ToggleButton
         android:id="@+id/btnControl_Led"
+        style="@style/Text.HintStyle"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:background="#FFFFFF"
         android:outlineSpotShadowColor="#FFFFFF"
-        style="@style/Text.HintStyle"
-        android:textStyle="bold"
-        android:textColorHighlight="#FFBB00"
         android:textColor="@drawable/toggle_select_color"
+        android:textColorHighlight="#FFBB00"
         android:textOff="@string/btn_green_off"
         android:textOn="@string/btn_green_on"
-
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
+        android:gravity="center"
         app:layout_constraintEnd_toStartOf="@id/switch_mqtt"
-        />
+        app:layout_constraintStart_toStartOf="@id/textViewTitle"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
     <Switch
         android:id="@+id/switch_mqtt"
@@ -51,97 +50,157 @@
         android:textColor="@drawable/toggle_select_color"
         android:textStyle="bold"
         android:theme="@style/SwitchTheme"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+
+        app:layout_constraintEnd_toEndOf="@id/textViewTitle"
+        app:layout_constraintStart_toEndOf="@id/btnControl_Led"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-
-    <TextView
-        android:id="@+id/textView_airConditioner_data"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:gravity="center"
-        android:text="@string/textview_about"
-        style="@style/Text.BodyStyle"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
-
     <TextView
         android:id="@+id/textView_led_data"
+        style="@style/Text.BodyStyle"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        style="@style/Text.BodyStyle"
-        android:gravity="center"
-        android:visibility="gone"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
+        android:gravity="center"
 
-    <TextView
-        android:id="@+id/textView_preview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="센서와 연결 해야 합니다."
-        style="@style/Text.BodyStyle"
-        android:gravity="center"
         android:visibility="gone"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/switch_mqtt"
+        app:layout_constraintStart_toStartOf="@id/btnControl_Led"
         app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_light_animation"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_led_data"
 
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/textView_led_data"
+        app:layout_constraintStart_toStartOf="@id/textView_led_data"
+        app:layout_constraintTop_toBottomOf="@id/textView_led_data"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
         app:lottie_rawRes="@raw/lighton" />
+
+    <TextView
+        android:id="@+id/textView_airConditioner_data"
+        style="@style/Text.BodyStyle"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/textview_about"
+
+        app:layout_constraintEnd_toEndOf="@id/switch_mqtt"
+        app:layout_constraintStart_toStartOf="@id/btnControl_Led"
+        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_air_animation"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintEnd_toEndOf="@id/textView_airConditioner_data"
+        app:layout_constraintStart_toStartOf="@id/textView_airConditioner_data"
         app:layout_constraintTop_toBottomOf="@id/textView_airConditioner_data"
 
         app:lottie_autoPlay="false"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/airconditional" />
 
-
-    <Button
-        android:id="@+id/button_airConditioner"
+    <TextView
+        android:id="@+id/textView_preview"
+        style="@style/Text.BodyStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="센서와 연결 해야 합니다."
         android:visibility="gone"
-
-        android:text="@string/control_button_start"
-        android:background="#B2CCFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="@id/switch_mqtt"
+        app:layout_constraintStart_toStartOf="@id/btnControl_Led"
+        app:layout_constraintTop_toBottomOf="@id/switch_mqtt" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_iotPlaform_animation"
+        android:id="@+id/lottie_air_control_animation"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:visibility="gone"
+
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+
+        app:lottie_rawRes="@raw/airconditional_control"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/textView_air_control"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:text="에어컨 제어 완료"
+        style="@style/Text.BodyStyle"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lottie_air_control_animation" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_iotPlatform_animation"
         android:layout_width="match_parent"
         android:layout_height="300dp"
 
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/button_airConditioner_on"
         app:layout_constraintBottom_toBottomOf="parent"
+
+
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/iot_platform_animation" />
 
+    <Button
+        android:id="@+id/button_airConditioner_off"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+
+        android:visibility="gone"
+        android:background="@drawable/button_shape"
+        android:text="@string/control_button_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_airConditioner_on"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_airConditioner_on"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+
+        android:background="@drawable/button_shape"
+        android:text="에어컨 작동"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_airConditioner_off" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_loading_animation"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/textView_airConditioner_data"
+        app:layout_constraintStart_toStartOf="@id/textView_airConditioner_data"
+        app:layout_constraintEnd_toEndOf="@id/textView_airConditioner_data"
+
+
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading" />
 </androidx.constraintlayout.widget.ConstraintLayout>

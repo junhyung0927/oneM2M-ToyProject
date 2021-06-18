@@ -1,0 +1,30 @@
+{
+  "op": 5,
+  "rqi": "QgAdxbSUM8",
+  "to": "mqtt://192.168.10.238/Sdaewon_demo?ct=json",
+  "fr": "/Mobius2",
+  "pc": {
+    "m2m:sgn": {
+      "sur": "Mobius/daewon_demo/temperature/sub",
+      "nev": {
+        "rep": {
+          "m2m:cin": {
+            "rn": "4-20210617135651208",
+            "ty": 4,
+            "pi": "3-20210617111528327409",
+            "ri": "4-20210617135651208305",
+            "ct": "20210617T135651",
+            "lt": "20210617T135651",
+            "st": 250,
+            "et": "20230617T135651",
+            "cs": 4,
+            "con": "25.3",
+            "cr": "Sdaewon_demo"
+          }
+        },
+        "net": 3
+      },
+      "rvi": "2a"
+    }
+  }
+}

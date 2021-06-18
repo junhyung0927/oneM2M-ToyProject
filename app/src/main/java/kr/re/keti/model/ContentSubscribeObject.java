@@ -25,7 +25,7 @@ public class ContentSubscribeObject {
     }
 
     public String makeXML(){
-
+        //air body 속성 제어
         String xml ="";
         xml +="<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
         xml +="<m2m:sub ";

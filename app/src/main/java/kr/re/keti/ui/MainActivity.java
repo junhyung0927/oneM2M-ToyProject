@@ -1,7 +1,9 @@
 package kr.re.keti.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -45,24 +47,32 @@ import kr.re.keti.util.ParseElementXml;
 
 public class MainActivity extends AppCompatActivity implements Button.OnClickListener, CompoundButton.OnCheckedChangeListener {
     public Button btnRetrieve;
+
     public LottieAnimationView lottie_air_animation;
     public LottieAnimationView lottie_light_animation;
+    public LottieAnimationView lottie_air_control_animation;
+    public LottieAnimationView lottie_loading_animation;
+
     public ToggleButton btnControl_Led;
     public Switch Switch_MQTT;
-    public Button button_airConditioner;
     public TextView textView_airConditioner_data;
     public TextView textView_led_data;
     public TextView textView_preview;
-    public Handler handler;
+    public TextView textView_air_control;
+    public TextView textView_led_loading;
+    public Button button_airConditioner_off;
+    public Button button_airConditioner_on;
 
+    public Handler handler;
     private static CSEBase csebase = new CSEBase();
     private static AE ae = new AE();
     private static String TAG = "MainActivity";
     private String MQTTPort = "1883";
-    private String ServiceAEName = "IYAHN_DEMO";
+    private String ServiceAEName = "daewon_demo";
     private String MQTT_Req_Topic = "";
     private String MQTT_Resp_Topic = "";
     private MqttAndroidClient mqttClient = null;
+
 
     // Main
     public MainActivity() {
@@ -72,18 +82,27 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     /* onCreate */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        bind(R.layout.activity_main);
         setContentView(R.layout.activity_main);
+//        binding.setLifecycleOwner(this);
+
 
         lottie_air_animation = (LottieAnimationView) findViewById(R.id.lottie_air_animation);
         lottie_light_animation = (LottieAnimationView) findViewById(R.id.lottie_light_animation);
+        lottie_air_control_animation = (LottieAnimationView) findViewById(R.id.lottie_air_control_animation);
+        lottie_loading_animation = (LottieAnimationView) findViewById(R.id.lottie_loading_animation);
+
         Switch_MQTT = (Switch) findViewById(R.id.switch_mqtt);
         btnControl_Led = (ToggleButton) findViewById(R.id.btnControl_Led);
+        button_airConditioner_off = (Button) findViewById(R.id.button_airConditioner_off);
+        button_airConditioner_on = (Button) findViewById(R.id.button_airConditioner_on);
         textView_airConditioner_data = (TextView) findViewById(R.id.textView_airConditioner_data);
         textView_led_data = (TextView) findViewById(R.id.textView_led_data);
         textView_preview = (TextView) findViewById(R.id.textView_preview);
-        button_airConditioner = (Button) findViewById(R.id.button_airConditioner);
+        textView_air_control = (TextView) findViewById(R.id.textView_air_control);
 
-        button_airConditioner.setOnClickListener(this);
+        button_airConditioner_on.setOnClickListener(this);
+        button_airConditioner_off.setOnClickListener(this);
         Switch_MQTT.setOnCheckedChangeListener(this);
         btnControl_Led.setOnClickListener(this);
 
@@ -93,7 +112,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
     /* AE Create for android AE */
     public void GetAEInfo() {
-        csebase.setInfo("192.168.10.75", "7579", "Mobius", "1883");
+
+        csebase.setInfo("192.168.10.238", "7579", "Mobius", "1883");
         // AE Create for Android AE
         ae.setAppName("wisoftApp");
         aeCreateRequest aeCreate = new aeCreateRequest();
@@ -104,7 +124,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     public void run() {
                         Log.d(TAG, "** AE Create ResponseCode[" + msg + "]");
                         if (Integer.parseInt(msg) == 201) {
-                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/" + ae.getAEid() + "_sub" + "/#";
+//                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/" + ae.getAEid() + "_sub" + "/#";
+                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/Sdaewon_demo/json";
                             MQTT_Resp_Topic = "/oneM2M/resp/Mobius2/" + ae.getAEid() + "_sub" + "/json";
                             Log.d(TAG, "ReqTopic[" + MQTT_Req_Topic + "]");
                             Log.d(TAG, "ResTopic[" + MQTT_Resp_Topic + "]");
@@ -115,7 +136,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     handler.post(new Runnable() {
                                         public void run() {
                                             Log.d(TAG, "** AE Retrive ResponseCode[" + resmsg + "]");
-                                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/" + ae.getAEid() + "_sub" + "/#";
+//                                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/" + ae.getAEid() + "_sub" + "/#";
+                                            MQTT_Req_Topic = "/oneM2M/req/Mobius2/Sdaewon_demo/json";
                                             MQTT_Resp_Topic = "/oneM2M/resp/Mobius2/" + ae.getAEid() + "_sub" + "/json";
                                             Log.d(TAG, "ReqTopic[" + MQTT_Req_Topic + "]");
                                             Log.d(TAG, "ResTopic[" + MQTT_Resp_Topic + "]");
@@ -134,21 +156,23 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
     /* Switch - Get Co2 Data With MQTT */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
         if (isChecked) {
             Log.d(TAG, "MQTT Create");
-            button_airConditioner.setVisibility(View.VISIBLE);
-            textView_airConditioner_data.setVisibility(View.VISIBLE);
+            button_airConditioner_off.setVisibility(View.VISIBLE);
+            button_airConditioner_on.setVisibility(View.VISIBLE);
             textView_preview.setVisibility(View.GONE);
-            lottie_air_animation.resumeAnimation();
-            lottie_air_animation.setProgress(0.1f);
-            lottie_air_animation.setVisibility(View.VISIBLE);
+            textView_airConditioner_data.setVisibility(View.VISIBLE);
+
             MQTT_Create(true);
         } else {
-            button_airConditioner.setVisibility(View.GONE);
+            lottie_loading_animation.setVisibility(View.GONE);
+            button_airConditioner_off.setVisibility(View.GONE);
+            button_airConditioner_on.setVisibility(View.GONE);
             lottie_air_animation.setVisibility(View.GONE);
             textView_airConditioner_data.setVisibility(View.GONE);
             textView_preview.setVisibility(View.VISIBLE);
+            textView_air_control.setVisibility(View.GONE);
+
             Log.d(TAG, "MQTT Close");
             MQTT_Create(false);
         }
@@ -157,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     /* MQTT Subscription */
     public void MQTT_Create(boolean mtqqStart) {
         if (mtqqStart && mqttClient == null) {
+            lottie_loading_animation.setVisibility(View.VISIBLE);
 
             /* Subscription Resource Create to Yellow Turtle */
             SubscribeResource subcribeResource = new SubscribeResource();
@@ -174,6 +199,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
             /* MQTT Subscribe */
             mqttClient = new MqttAndroidClient(this.getApplicationContext(), "tcp://" + csebase.getHost() + ":" + csebase.getMQTTPort(), MqttClient.generateClientId());
+            //http://192.168.10.75:7579/Mobius/IYAHN_DEMO/co2
+
             mqttClient.setCallback(mainMqttCallback);
             try {
                 IMqttToken token = mqttClient.connect();
@@ -186,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             mqttClient.setCallback(null);
             mqttClient.close();
             mqttClient = null;
-            MQTT_Create(true);
+//            MQTT_Create(true);
         }
     }
 
@@ -200,8 +227,12 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
             MqttMessage message = new MqttMessage(payload.getBytes());
 
+            System.out.println(MQTT_Req_Topic);
+
             try {
-                mqttClient.subscribe(MQTT_Req_Topic, mqttQos);
+                if(mqttClient != null){
+                    mqttClient.subscribe(MQTT_Req_Topic, mqttQos);
+                }
             } catch (MqttException e) {
                 System.out.println("섭 에러");
                 e.printStackTrace();
@@ -222,6 +253,10 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
+            lottie_loading_animation.setVisibility(View.GONE);
+            lottie_air_animation.resumeAnimation();
+            lottie_air_animation.setProgress(0.1f);
+            lottie_air_animation.setVisibility(View.VISIBLE);
             Log.d(TAG, "messageArrived");
 
             JSONObject jsonObject = new JSONObject(String.valueOf(message));
@@ -231,8 +266,13 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             JSONObject rep = new JSONObject(nev.get("rep").toString());
             JSONObject m2m_cin = new JSONObject(rep.get("m2m:cin").toString());
 
-            textView_airConditioner_data.setText("");
-            textView_airConditioner_data.setText("연구실 에어컨 온도 \r\n\r\n" +  m2m_cin.get("con"));
+            String tem = m2m_sgn.get("sur").toString();
+            String temParse = tem.split("/")[2];
+
+            if(temParse.equals("temperature")){
+                textView_airConditioner_data.setText("");
+                textView_airConditioner_data.setText("연구실 에어컨 온도 \r\n\r\n" + m2m_cin.get("con"));
+            }
 
             Log.d(TAG, "Notify ResMessage:" + message.toString());
 
@@ -260,16 +300,34 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         }
     };
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_airConditioner: {
-                RetrieveRequest req = new RetrieveRequest();
+            case R.id.button_airConditioner_off: {
+
+                lottie_loading_animation.setVisibility(View.GONE);
+                lottie_air_control_animation.resumeAnimation();
+                lottie_air_control_animation.setVisibility(View.VISIBLE);
+
+                lottie_air_animation.setVisibility(View.GONE);
+                textView_airConditioner_data.setVisibility(View.GONE);
+
+                textView_air_control.setVisibility(View.VISIBLE);
+
+                AirOffControlRequest req = new AirOffControlRequest("off");
+                try {
+                    mqttClient.unsubscribe(MQTT_Req_Topic);
+                    System.out.println("unsub");
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+
                 req.setReceiver(new IReceived() {
                     public void getResponseBody(final String msg) {
                         handler.post(new Runnable() {
                             public void run() {
-
+                                //에어컨 제어 완료시 나올 텍스트 뷰...
                             }
                         });
                     }
@@ -277,24 +335,60 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 req.start();
                 break;
             }
+
+            case R.id.button_airConditioner_on: {
+                lottie_air_control_animation.setVisibility(View.GONE);
+                textView_air_control.setVisibility(View.GONE);
+
+                textView_airConditioner_data.setVisibility(View.VISIBLE);
+                lottie_loading_animation.setVisibility(View.VISIBLE);
+                AirOnControlRequest req = new AirOnControlRequest("on");
+
+                mqttClient = null;
+                mqttClient = new MqttAndroidClient(this.getApplicationContext(), "tcp://" + csebase.getHost() + ":" + csebase.getMQTTPort(), MqttClient.generateClientId());
+                //http://192.168.10.75:7579/Mobius/IYAHN_DEMO/co2
+
+                mqttClient.setCallback(mainMqttCallback);
+                try {
+                    IMqttToken token = mqttClient.connect();
+                    token.setActionCallback(mainIMqttActionListener);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+
+                req.setReceiver(new IReceived() {
+                    public void getResponseBody(final String msg) {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                textView_airConditioner_data.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                });
+                req.start();
+                break;
+            }
+
             case R.id.btnControl_Led: {
                 if (((ToggleButton) v).isChecked()) {
-                    lottie_light_animation.resumeAnimation();
-                    lottie_light_animation.setVisibility(View.VISIBLE);
-
-                    ControlRequest req = new ControlRequest("1");
+                    textView_airConditioner_data.setVisibility(View.GONE);
+                    textView_preview.setVisibility(View.VISIBLE);
+                    ControlRequest req = new ControlRequest("on");
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
                             handler.post(new Runnable() {
                                 public void run() {
                                     try {
+                                        textView_preview.setVisibility(View.GONE);
+                                        lottie_light_animation.resumeAnimation();
+                                        lottie_light_animation.setVisibility(View.VISIBLE);
+
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_airConditioner_data.setVisibility(View.GONE);
-                                        textView_preview.setVisibility(View.GONE);
                                         textView_led_data.setVisibility(View.VISIBLE);
-                                        textView_led_data.setText("LED 센서 ON \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
                                     } catch (JSONException e) {
+//                                        textView_led_loading.setVisibility(View.VISIBLE);
                                         e.printStackTrace();
                                     }
                                 }
@@ -303,9 +397,10 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     });
                     req.start();
                 } else {
+//                    textView_led_loading.setVisibility(View.GONE);
                     lottie_light_animation.setVisibility(View.GONE);
-                    ControlRequest req = new ControlRequest("2");
-
+                    ControlRequest req = new ControlRequest("off");
+                    textView_preview.setVisibility(View.VISIBLE);
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
                             handler.post(new Runnable() {
@@ -313,9 +408,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_led_data.setText("LED 센서 OFF \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
                                         textView_led_data.setVisibility(View.GONE);
-                                        textView_preview.setVisibility(View.VISIBLE);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -352,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     class RetrieveRequest extends Thread {
         private final Logger LOG = Logger.getLogger(RetrieveRequest.class.getName());
         private IReceived receiver;
-        private String ContainerName = "co2";
+        private String ContainerName = "temperature";
 
         public RetrieveRequest(String containerName) {
             this.ContainerName = containerName;
@@ -397,6 +491,132 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
             } catch (Exception exp) {
                 LOG.log(Level.WARNING, exp.getMessage());
+            }
+        }
+    }
+
+    /* AirOff Control*/
+    class AirOffControlRequest extends Thread {
+        private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
+        private IReceived receiver;
+        private String container_name = "aircon";
+
+        public ContentInstanceObject contentinstance;
+
+        //led con 값
+        public AirOffControlRequest(String comm) {
+            contentinstance = new ContentInstanceObject();
+            contentinstance.setContent(comm);
+        }
+
+        public void setReceiver(IReceived hanlder) {
+            this.receiver = hanlder;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String sb = csebase.getServiceUrl() + "/" + ServiceAEName + "/" + container_name;
+                URL mUrl = new URL(sb);
+
+                HttpURLConnection conn = (HttpURLConnection) mUrl.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setUseCaches(false);
+                conn.setInstanceFollowRedirects(false);
+
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/vnd.onem2m-res+xml;ty=4");
+                conn.setRequestProperty("locale", "ko");
+                conn.setRequestProperty("X-M2M-RI", "12345");
+                conn.setRequestProperty("X-M2M-Origin", ae.getAEid());
+
+                String reqContent = contentinstance.makeXML();
+                conn.setRequestProperty("Content-Length", String.valueOf(reqContent.length()));
+
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                dos.write(reqContent.getBytes());
+                dos.flush();
+                dos.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                StringBuilder resp = new StringBuilder();
+                String strLine = "";
+                while ((strLine = in.readLine()) != null) {
+                    resp.append(strLine);
+                }
+                if (resp.toString() != "") {
+                    receiver.getResponseBody(resp.toString());
+                }
+                conn.disconnect();
+
+            } catch (Exception exp) {
+                LOG.log(Level.SEVERE, exp.getMessage());
+            }
+        }
+    }
+
+    /* AirOff Control*/
+    class AirOnControlRequest extends Thread {
+        private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
+        private IReceived receiver;
+        private String container_name = "aircon";
+
+        public ContentInstanceObject contentinstance;
+
+        //led con 값
+        public AirOnControlRequest(String comm) {
+            contentinstance = new ContentInstanceObject();
+            contentinstance.setContent(comm);
+        }
+
+        public void setReceiver(IReceived hanlder) {
+            this.receiver = hanlder;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String sb = csebase.getServiceUrl() + "/" + ServiceAEName + "/" + container_name;
+                URL mUrl = new URL(sb);
+
+                HttpURLConnection conn = (HttpURLConnection) mUrl.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setUseCaches(false);
+                conn.setInstanceFollowRedirects(false);
+
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/vnd.onem2m-res+xml;ty=4");
+                conn.setRequestProperty("locale", "ko");
+                conn.setRequestProperty("X-M2M-RI", "12345");
+                conn.setRequestProperty("X-M2M-Origin", ae.getAEid());
+
+                String reqContent = contentinstance.makeXML();
+                conn.setRequestProperty("Content-Length", String.valueOf(reqContent.length()));
+
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                dos.write(reqContent.getBytes());
+                dos.flush();
+                dos.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                StringBuilder resp = new StringBuilder();
+                String strLine = "";
+                while ((strLine = in.readLine()) != null) {
+                    resp.append(strLine);
+                }
+                if (resp.toString() != "") {
+                    receiver.getResponseBody(resp.toString());
+                }
+                conn.disconnect();
+
+            } catch (Exception exp) {
+                LOG.log(Level.SEVERE, exp.getMessage());
             }
         }
     }
@@ -601,11 +821,11 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         }
     }
 
-    /* Subscribe Co2 Content Resource */
+    /* Subscribe air conditional Content Resource */
     class SubscribeResource extends Thread {
         private final Logger LOG = Logger.getLogger(SubscribeResource.class.getName());
         private IReceived receiver;
-        private String container_name = "co2"; //change to control container name
+        private String container_name = "temperature"; //change to control container name
 
         public ContentSubscribeObject subscribeInstance;
 
