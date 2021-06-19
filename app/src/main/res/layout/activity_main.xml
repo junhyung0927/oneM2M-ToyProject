@@ -170,8 +170,10 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
 
+        android:textSize="20sp"
         android:visibility="gone"
         android:background="@drawable/button_shape"
+        android:fontFamily="@font/eulyoo1945semibold"
         android:text="@string/control_button_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_airConditioner_on"
@@ -182,6 +184,8 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
 
+        android:fontFamily="@font/eulyoo1945semibold"
+        android:textSize="20sp"
         android:background="@drawable/button_shape"
         android:text="에어컨 작동"
         android:visibility="gone"

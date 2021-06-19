@@ -2,10 +2,10 @@
     <string name="app_name" translatable="false">Mobius SampleApp</string>
     <string name="control_button_start" translatable="false">에어컨 제어</string>
     <string name="control_button_finsh" translatable="false">에어컨 제어 완료</string>
-    <string name="textview_about" translatable="false">연결중입니다.</string>
+    <string name="textview_about" translatable="false">제어할 기기를 \n 선택해주세요.</string>
     <string name="btn_co2" translatable="false">CO2 조회</string>
     <string name="title" translatable="false">Wisoft Platform</string>
-    <string name="btn_switch" translatable="false">MQTT Co2 조회</string>
+    <string name="btn_switch" translatable="false">에어컨 ON/OFF</string>
     <string name="btn_green_off" translatable="false">led  센서 작동</string>
     <string name="btn_green_on" translatable="false">led 센서 종료</string>
     <string name="btn_blue_off" translatable="false">에어컨 센서 작동</string>

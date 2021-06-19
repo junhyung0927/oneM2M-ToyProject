@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             System.out.println(MQTT_Req_Topic);
 
             try {
-                if(mqttClient != null){
+                if (mqttClient != null) {
                     mqttClient.subscribe(MQTT_Req_Topic, mqttQos);
                 }
             } catch (MqttException e) {
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             String tem = m2m_sgn.get("sur").toString();
             String temParse = tem.split("/")[2];
 
-            if(temParse.equals("temperature")){
+            if (temParse.equals("temperature")) {
                 textView_airConditioner_data.setText("");
                 textView_airConditioner_data.setText("연구실 에어컨 온도 \r\n\r\n" + m2m_cin.get("con"));
             }
@@ -306,18 +306,19 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         switch (v.getId()) {
             case R.id.button_airConditioner_off: {
 
+                lottie_air_animation.setVisibility(View.GONE);
+                textView_airConditioner_data.setVisibility(View.GONE);
+
                 lottie_loading_animation.setVisibility(View.GONE);
                 lottie_air_control_animation.resumeAnimation();
                 lottie_air_control_animation.setVisibility(View.VISIBLE);
-
-                lottie_air_animation.setVisibility(View.GONE);
-                textView_airConditioner_data.setVisibility(View.GONE);
 
                 textView_air_control.setVisibility(View.VISIBLE);
 
                 AirOffControlRequest req = new AirOffControlRequest("off");
                 try {
                     mqttClient.unsubscribe(MQTT_Req_Topic);
+                    mqttClient.unsubscribe(MQTT_Resp_Topic);
                     System.out.println("unsub");
                 } catch (MqttException e) {
                     e.printStackTrace();
@@ -625,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     class ControlRequest extends Thread {
         private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
         private IReceived receiver;
-        private String container_name = "led";
+        private String container_name = "front-led";
 
         public ContentInstanceObject contentinstance;
 
