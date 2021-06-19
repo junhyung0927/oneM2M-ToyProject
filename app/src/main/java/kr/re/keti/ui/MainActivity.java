@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     public TextView textView_preview;
     public TextView textView_air_control;
     public TextView textView_led_loading;
+
+    public Button button_frontLight_control;
+    public Button button_backLight_control;
     public Button button_airConditioner_off;
     public Button button_airConditioner_on;
 
@@ -94,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
         Switch_MQTT = (Switch) findViewById(R.id.switch_mqtt);
         btnControl_Led = (ToggleButton) findViewById(R.id.btnControl_Led);
+        button_backLight_control = (Button) findViewById(R.id.button_backLight_control);
+        button_frontLight_control = (Button) findViewById(R.id.button_frontLight_control);
         button_airConditioner_off = (Button) findViewById(R.id.button_airConditioner_off);
         button_airConditioner_on = (Button) findViewById(R.id.button_airConditioner_on);
         textView_airConditioner_data = (TextView) findViewById(R.id.textView_airConditioner_data);
@@ -103,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
         button_airConditioner_on.setOnClickListener(this);
         button_airConditioner_off.setOnClickListener(this);
+        button_frontLight_control.setOnClickListener(this);
+        button_backLight_control.setOnClickListener(this);
+
         Switch_MQTT.setOnCheckedChangeListener(this);
         btnControl_Led.setOnClickListener(this);
 
@@ -374,6 +382,18 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 if (((ToggleButton) v).isChecked()) {
                     textView_airConditioner_data.setVisibility(View.GONE);
                     textView_preview.setVisibility(View.VISIBLE);
+                    button_backLight_control.setVisibility(View.VISIBLE);
+                    button_frontLight_control.setVisibility(View.VISIBLE);
+
+                } else {
+                    lottie_light_animation.setVisibility(View.GONE);
+                    button_backLight_control.setVisibility(View.GONE);
+                    button_frontLight_control.setVisibility(View.GONE);
+                }
+                break;
+            }
+            case R.id.button_frontLight_control: {
+                if (((ToggleButton) v).isChecked()) {
                     ControlRequest req = new ControlRequest("on");
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
@@ -385,9 +405,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                         lottie_light_animation.setVisibility(View.VISIBLE);
 
                                         JSONObject jsonObject = new JSONObject(msg);
-                                        JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
                                         textView_led_data.setVisibility(View.VISIBLE);
-                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setText("LED 센서 \r\n\r\n" + m2m_cin.get("con"));
                                     } catch (JSONException e) {
 //                                        textView_led_loading.setVisibility(View.VISIBLE);
                                         e.printStackTrace();
@@ -399,6 +419,55 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     req.start();
                 } else {
 //                    textView_led_loading.setVisibility(View.GONE);
+                    lottie_light_animation.setVisibility(View.GONE);
+                    ControlRequest req = new ControlRequest("off");
+                    textView_preview.setVisibility(View.VISIBLE);
+                    req.setReceiver(new IReceived() {
+                        public void getResponseBody(final String msg) {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(msg);
+                                        JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
+                                        textView_led_data.setVisibility(View.GONE);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    req.start();
+                }
+                break;
+            }
+            case R.id.button_backLight_control: {
+                if (((ToggleButton) v).isChecked()) {
+                    ControlRequest req = new ControlRequest("on");
+                    req.setReceiver(new IReceived() {
+                        public void getResponseBody(final String msg) {
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    try {
+                                        textView_preview.setVisibility(View.GONE);
+                                        lottie_light_animation.resumeAnimation();
+                                        lottie_light_animation.setVisibility(View.VISIBLE);
+
+                                        JSONObject jsonObject = new JSONObject(msg);
+                                        JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        textView_led_data.setVisibility(View.VISIBLE);
+                                        textView_led_data.setText("LED 센서 \r\n\r\n" + m2m_cin.get("con"));
+                                    } catch (JSONException e) {
+//                                        textView_led_loading.setVisibility(View.VISIBLE);
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    req.start();
+                } else {
                     lottie_light_animation.setVisibility(View.GONE);
                     ControlRequest req = new ControlRequest("off");
                     textView_preview.setVisibility(View.VISIBLE);

@@ -28,6 +28,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:background="#FFFFFF"
+
         android:outlineSpotShadowColor="#FFFFFF"
         android:textColor="@drawable/toggle_select_color"
         android:textColorHighlight="#FFBB00"
@@ -38,6 +39,38 @@
         app:layout_constraintEnd_toStartOf="@id/switch_mqtt"
         app:layout_constraintStart_toStartOf="@id/textViewTitle"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
+
+    <ToggleButton
+        android:id="@+id/button_frontLight_control"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:textSize="20sp"
+        android:background="@drawable/light_button_shape"
+        android:fontFamily="@font/eulyoo1945semibold"
+        android:text="@string/frontLight_control_button"
+
+        android:visibility="gone"
+        android:textOff="@string/btn_frontLight_off"
+        android:textOn="@string/btn_frontLight_on"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_backLight_control"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/button_backLight_control"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:background="@drawable/light_button_shape"
+        android:fontFamily="@font/eulyoo1945semibold"
+        android:textOff="@string/btn_backLight_off"
+        android:textOn="@string/btn_backLight_on"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_frontLight_control"
+        app:layout_constraintEnd_toEndOf="parent"
+         />
 
     <Switch
         android:id="@+id/switch_mqtt"
@@ -174,7 +207,7 @@
         android:visibility="gone"
         android:background="@drawable/button_shape"
         android:fontFamily="@font/eulyoo1945semibold"
-        android:text="@string/control_button_start"
+        android:text="@string/air_control_button_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/button_airConditioner_on"
         app:layout_constraintStart_toStartOf="parent" />
