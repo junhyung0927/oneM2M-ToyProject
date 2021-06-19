@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
                                         textView_led_data.setVisibility(View.VISIBLE);
-                                        textView_led_data.setText("LED 센서 \r\n\r\n" + m2m_cin.get("con"));
+                                        textView_led_data.setText("전등 센서 \r\n\r\n" + m2m_cin.get("con"));
                                     } catch (JSONException e) {
 //                                        textView_led_loading.setVisibility(View.VISIBLE);
                                         e.printStackTrace();
@@ -418,7 +418,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     });
                     req.start();
                 } else {
-//                    textView_led_loading.setVisibility(View.GONE);
                     lottie_light_animation.setVisibility(View.GONE);
                     ControlRequest req = new ControlRequest("off");
                     textView_preview.setVisibility(View.VISIBLE);
@@ -428,9 +427,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                 public void run() {
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
-                                        JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
-                                        textView_led_data.setVisibility(View.GONE);
+                                        JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -457,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
                                         textView_led_data.setVisibility(View.VISIBLE);
-                                        textView_led_data.setText("LED 센서 \r\n\r\n" + m2m_cin.get("con"));
+                                        textView_led_data.setText("후등 센서 \r\n\r\n" + m2m_cin.get("con"));
                                     } catch (JSONException e) {
 //                                        textView_led_loading.setVisibility(View.VISIBLE);
                                         e.printStackTrace();
@@ -478,8 +475,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
-                                        textView_led_data.setText("LED 센서 \r\n\r\n" + jsonObject1.get("con"));
-                                        textView_led_data.setVisibility(View.GONE);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
