@@ -1,7 +1,6 @@
 package kr.re.keti.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -394,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             }
             case R.id.button_frontLight_control: {
                 if (((ToggleButton) v).isChecked()) {
-                    ControlRequest req = new ControlRequest("on");
+                    FrontLedControlRequest req = new FrontLedControlRequest("on");
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
                             handler.post(new Runnable() {
@@ -419,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     req.start();
                 } else {
                     lottie_light_animation.setVisibility(View.GONE);
-                    ControlRequest req = new ControlRequest("off");
+                    BackLedControlRequest req = new BackLedControlRequest("off");
                     textView_preview.setVisibility(View.VISIBLE);
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
@@ -428,6 +427,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
                                         JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        textView_led_data.setVisibility(View.GONE);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             }
             case R.id.button_backLight_control: {
                 if (((ToggleButton) v).isChecked()) {
-                    ControlRequest req = new ControlRequest("on");
+                    BackLedControlRequest req = new BackLedControlRequest("on");
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
                             handler.post(new Runnable() {
@@ -466,7 +466,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                     req.start();
                 } else {
                     lottie_light_animation.setVisibility(View.GONE);
-                    ControlRequest req = new ControlRequest("off");
+                    BackLedControlRequest req = new BackLedControlRequest("off");
                     textView_preview.setVisibility(View.VISIBLE);
                     req.setReceiver(new IReceived() {
                         public void getResponseBody(final String msg) {
@@ -474,7 +474,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                                 public void run() {
                                     try {
                                         JSONObject jsonObject = new JSONObject(msg);
-                                        JSONObject jsonObject1 = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        JSONObject m2m_cin = new JSONObject(jsonObject.get("m2m:cin").toString());
+                                        textView_led_data.setVisibility(View.GONE);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -562,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
     /* AirOff Control*/
     class AirOffControlRequest extends Thread {
-        private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
+        private final Logger LOG = Logger.getLogger(BackLedControlRequest.class.getName());
         private IReceived receiver;
         private String container_name = "aircon";
 
@@ -625,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
     /* AirOff Control*/
     class AirOnControlRequest extends Thread {
-        private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
+        private final Logger LOG = Logger.getLogger(BackLedControlRequest.class.getName());
         private IReceived receiver;
         private String container_name = "aircon";
 
@@ -687,15 +688,79 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     }
 
     /* Request Control LED */
-    class ControlRequest extends Thread {
-        private final Logger LOG = Logger.getLogger(ControlRequest.class.getName());
+    class FrontLedControlRequest extends Thread {
+        private final Logger LOG = Logger.getLogger(BackLedControlRequest.class.getName());
         private IReceived receiver;
         private String container_name = "front-led";
 
         public ContentInstanceObject contentinstance;
 
         //led con 값
-        public ControlRequest(String comm) {
+        public FrontLedControlRequest(String comm) {
+            contentinstance = new ContentInstanceObject();
+            contentinstance.setContent(comm);
+        }
+
+        public void setReceiver(IReceived hanlder) {
+            this.receiver = hanlder;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String sb = csebase.getServiceUrl() + "/" + ServiceAEName + "/" + container_name;
+                URL mUrl = new URL(sb);
+
+                HttpURLConnection conn = (HttpURLConnection) mUrl.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setUseCaches(false);
+                conn.setInstanceFollowRedirects(false);
+
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Content-Type", "application/vnd.onem2m-res+xml;ty=4");
+                conn.setRequestProperty("locale", "ko");
+                conn.setRequestProperty("X-M2M-RI", "12345");
+                conn.setRequestProperty("X-M2M-Origin", ae.getAEid());
+
+                String reqContent = contentinstance.makeXML();
+                conn.setRequestProperty("Content-Length", String.valueOf(reqContent.length()));
+
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                dos.write(reqContent.getBytes());
+                dos.flush();
+                dos.close();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                StringBuilder resp = new StringBuilder();
+                String strLine = "";
+                while ((strLine = in.readLine()) != null) {
+                    resp.append(strLine);
+                }
+                if (resp.toString() != "") {
+                    System.out.println("HTTP 과부하");
+                    receiver.getResponseBody(resp.toString());
+                }
+                conn.disconnect();
+
+            } catch (Exception exp) {
+                LOG.log(Level.SEVERE, exp.getMessage());
+            }
+        }
+    }
+
+    /* Request Control LED */
+    class BackLedControlRequest extends Thread {
+        private final Logger LOG = Logger.getLogger(BackLedControlRequest.class.getName());
+        private IReceived receiver;
+        private String container_name = "back-led";
+
+        public ContentInstanceObject contentinstance;
+
+        //led con 값
+        public BackLedControlRequest(String comm) {
             contentinstance = new ContentInstanceObject();
             contentinstance.setContent(comm);
         }
